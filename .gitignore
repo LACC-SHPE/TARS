@@ -1,3 +1,4 @@
-/env
 .env
 
+/tars-ai/api/env
+/tars-ai/api/.env
