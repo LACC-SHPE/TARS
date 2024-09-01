@@ -8,6 +8,7 @@ CORS(app)
 
 logging = TarsLogger()
 
+logging.info("Hello Paola")
 # Chat GPT
 # Voice Recognition
 # Text to Speech (?)
