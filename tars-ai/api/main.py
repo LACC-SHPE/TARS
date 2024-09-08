@@ -1,8 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 from logger import TarsLogger
-import settings
-from core import GPTAgent
+from core.GPTAgent import GPTAgent
 
 # Prompt Engineering for ChatGPT
 # Chat GPT -> Paola
@@ -13,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 logging = TarsLogger()
-gptAgent = GPTAgent.GPTAgent()
+gpt_agent = GPTAgent(logging)
 
 
 @app.route("/api/move", methods=["POST"])

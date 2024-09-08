@@ -1,12 +1,11 @@
 from logger import TarsLogger
 
-logging = TarsLogger()
-
 
 class GPTAgent:
-    def __init__(self):
+    def __init__(self, logging: TarsLogger):
+        self.logging = logging
         pass
 
     def get_response(self, prompt):
-        logging.info("GPTAgent: " + prompt)
+        self.logging.info("GPTAgent: " + prompt)
         return "Hello Paola"
