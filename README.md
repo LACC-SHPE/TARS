@@ -1,4 +1,5 @@
 # TARS AI Project
+![SHPELACC](https://github.com/LACC-SHPE/.github/blob/main/Collaborate%20Innovate%20Empower.png) 
 
 ## Overview
 TARS AI is a project developed by the SHPE Club from LACC-MESA. It provides a Flask API for controlling a robot and a React application for user interaction.
