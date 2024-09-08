@@ -1,18 +1,54 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from logger import TarsLogger
 import settings
+from core import GPTAgent
+
+# Prompt Engineering for ChatGPT
+# Chat GPT -> Paola
+# Voice Recognition -> Deshell
+# Text to Speech (?) -> Deshell
 
 app = Flask(__name__)
 CORS(app)
 
 logging = TarsLogger()
-
-logging.info("Hello Paola")
-# Chat GPT
-# Voice Recognition
-# Text to Speech (?)
+gptAgent = GPTAgent.GPTAgent()
 
 
-# if __name__ == "__main__":
-#     app.run()
+@app.route("/api/move", methods=["POST"])
+def move():
+    # get the movement from the request
+    # move the robot
+    # get query from the request
+    query = request.json.get("query")
+    logging.info(f"Received query: {query}")
+    if query == "left":
+        # move left
+        pass
+    elif query == "right":
+        # move right
+        pass
+    elif query == "forward":
+        # move forward
+        pass
+    elif query == "backward":
+        # move backward
+        pass
+    else:
+        # handle invalid query
+        pass
+
+    return "Moving"
+
+
+@app.route("/api/speak", methods=["POST"])
+def speak():
+    # get the message from the request and speak it (text-to-speech module), request is from
+    # GPT's response
+    return "Speaking"
+
+
+if __name__ == "__main__":
+    # start the server
+    app.run("0.0.0.0", port=8080)
