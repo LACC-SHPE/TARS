@@ -8,3 +8,4 @@
 /cache/*
 
 /core/__pycache__
+/db/*

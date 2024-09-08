@@ -6,16 +6,34 @@ This module defines the Flask API for controlling a robot. It includes endpoints
 speech, and querying the robot's capabilities.
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 from logger import TarsLogger
 from core.GPTAgent import GPTAgent
+
+from core.DocumentManager import DocumentManager
+from core.EmbeddingManager import EmbeddingManager
 
 app = Flask(__name__)
 CORS(app)
 
 logging = TarsLogger()
-gpt_agent = GPTAgent(logging)
+
+logging.info("[TARS] Initializing Atlas...")
+
+doc_manager = DocumentManager("./cache")
+doc_manager.load_documents()
+doc_manager.split_documents()
+
+logging.info("[TARS] Loaded -> " + str(len(doc_manager.documents)) + " documents")
+
+embed_manager = EmbeddingManager(doc_manager.all_sections)
+embed_manager.create_and_persist_embeddings()
+
+logging.info("[TARS] Loaded -> " + str(len(embed_manager.all_sections)) + " embeddings")
+
+gpt_agent = GPTAgent(logging, embed_manager.vectordb)
+gpt_agent.setup()
 
 
 @app.route("/api/move", methods=["POST"])
@@ -23,7 +41,7 @@ def move():
     """
     Move the robot based on the command received in the request.
 
-    Expects a JSON payload with a 'move' key. Valid commands are 'left', 'right', 
+    Expects a JSON payload with a 'move' key. Valid commands are 'left', 'right',
     'forward', and 'backward'. Returns a confirmation message.
 
     Returns:
@@ -82,8 +100,9 @@ def ask():
     j = request.get_json()
     question = j.get("question")
     logging.debug(f"Received question: {question}")
-    # Implement question processing logic here
-    return jsonify({"message": "Asking"}), 200
+    response = gpt_agent.ask(question)
+
+    return Response(response, mimetype="text/event-stream")
 
 
 if __name__ == "__main__":
