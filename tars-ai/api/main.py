@@ -20,18 +20,19 @@ def move():
     # get the movement from the request
     # move the robot
     # get query from the request
-    query = request.json.get("query")
-    logging.info(f"Received query: {query}")
-    if query == "left":
+    j = request.get_json()
+    mv = j["move"]
+    logging.info(f"Received query: {mv}")
+    if mv == "left":
         # move left
         pass
-    elif query == "right":
+    elif mv == "right":
         # move right
         pass
-    elif query == "forward":
+    elif mv == "forward":
         # move forward
         pass
-    elif query == "backward":
+    elif mv == "backward":
         # move backward
         pass
     else:
@@ -46,6 +47,14 @@ def speak():
     # get the message from the request and speak it (text-to-speech module), request is from
     # GPT's response
     return "Speaking"
+
+
+@app.route("/api/ask", methods=["POST"])
+def ask():
+    # get the question from the request
+    j = request.get_json()
+    question = j["question"]
+    logging.info(f"Received question: {question}")
 
 
 if __name__ == "__main__":
