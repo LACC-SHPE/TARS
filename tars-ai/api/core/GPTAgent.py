@@ -32,6 +32,9 @@ class GPTAgent:
             partial_variables={"context": context_text},
         )
 
+        if settings.SHOW_DEBUG:
+            self.logging.debug(f"Prompt: {prompt}")
+
         parser = StrOutputParser()
 
         chain = RunnablePassthrough() | prompt | self.bot | parser

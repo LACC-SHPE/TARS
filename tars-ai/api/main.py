@@ -19,7 +19,11 @@ CORS(app)
 
 logging = TarsLogger()
 
-logging.info("[TARS] Initializing Atlas...")
+logging.info("[TARS] Initializing TARS ./.")
+
+logging.warning(
+    "[TARS] Server is currently running in DEBUG mode. Resources may be limited."
+)
 
 doc_manager = DocumentManager("./cache")
 doc_manager.load_documents()
@@ -27,7 +31,7 @@ doc_manager.split_documents()
 
 logging.info("[TARS] Loaded -> " + str(len(doc_manager.documents)) + " documents")
 
-embed_manager = EmbeddingManager(doc_manager.all_sections)
+embed_manager = EmbeddingManager(doc_manager.all_sections, logging)
 embed_manager.create_and_persist_embeddings()
 
 logging.info("[TARS] Loaded -> " + str(len(embed_manager.all_sections)) + " embeddings")
@@ -47,27 +51,32 @@ def move():
     Returns:
         str: Confirmation message indicating the movement command.
     """
-    j = request.get_json()
-    mv = j.get("move")
-    logging.debug(f"Received query: {mv}")
+    try:
+        j = request.get_json()
+        mv = j.get("move")
+        logging.debug(f"Received query: {mv}")
 
-    if mv == "left":
-        # move left
-        pass
-    elif mv == "right":
-        # move right
-        pass
-    elif mv == "forward":
-        # move forward
-        pass
-    elif mv == "backward":
-        # move backward
-        pass
-    else:
-        logging.warning("Invalid movement command received.")
-        return jsonify({"error": "Invalid movement command"}), 400
+        if mv == "left":
+            # move left
+            pass
+        elif mv == "right":
+            # move right
+            pass
+        elif mv == "forward":
+            # move forward
+            pass
+        elif mv == "backward":
+            # move backward
+            pass
+        else:
+            logging.warning("Invalid movement command received.")
+            return jsonify({"error": "Invalid movement command"}), 400
 
-    return jsonify({"message": "Moving"}), 200
+        return jsonify({"message": "Moving"}), 200
+
+    except Exception as e:
+        logging.error(f"Error processing move command: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/api/speak", methods=["POST"])
@@ -80,11 +89,16 @@ def speak():
     Returns:
         str: Confirmation message indicating the speaking action.
     """
-    j = request.get_json()
-    message = j.get("message")
-    logging.debug(f"Received message to speak: {message}")
-    # Implement text-to-speech functionality here
-    return jsonify({"message": "Speaking"}), 200
+    try:
+        j = request.get_json()
+        message = j.get("message")
+        logging.debug(f"Received message to speak: {message}")
+        # Implement text-to-speech functionality here
+        return jsonify({"message": "Speaking"}), 200
+
+    except Exception as e:
+        logging.error(f"Error processing speak command: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/api/ask", methods=["POST"])
@@ -97,17 +111,26 @@ def ask():
     Returns:
         str: Confirmation message indicating the question processing.
     """
-    j = request.get_json()
-    question = j.get("question")
-    logging.debug(f"Received question: {question}")
-    response = gpt_agent.ask(question)
+    try:
+        j = request.get_json()
+        question = j.get("question")
 
-    return Response(response, mimetype="text/event-stream")
+        response = ""
+        for chunk in gpt_agent.ask(question):
+            response += chunk
+
+        logging.debug(f"Question: {question}\nAnswer: {response}")
+
+        return Response(response, mimetype="text/event-stream")
+
+    except Exception as e:
+        logging.error(f"Error processing ask command: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 if __name__ == "__main__":
     """
     Start the Flask server.
     """
-    logging.info("Server has started")
+    logging.info("TARS server is now initialized.")
     app.run("0.0.0.0", port=8080)

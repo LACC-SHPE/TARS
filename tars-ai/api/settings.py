@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-IS_DEBUG = True
+SHOW_DEBUG = True
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
 ASK_TEMPLATE = """

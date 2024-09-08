@@ -5,7 +5,6 @@
 
 /__pycache__
 /.vscode
-/cache/*
 
 /core/__pycache__
 /db/*

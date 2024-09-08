@@ -43,7 +43,7 @@ class TarsLogger:
         self.console_handler.setFormatter(self.formatter)
         self.file_handler.setFormatter(self.formatter)
 
-        self.logger.info("Logger initialized")
+        self.logger.info("Logger is now initialized")
 
     def info(self, message):
         """
